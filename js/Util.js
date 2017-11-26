@@ -1,4 +1,6 @@
 var SVG_NAMESPACE = 'http://www.w3.org/2000/svg';
+var ANIMATION_ATTRACTION = 0.1;
+var ANIMATION_DAMPING = 0.5;
 
 function createSvgElement(tag, attributes, parent) {
   var el = document.createElementNS(SVG_NAMESPACE, tag);

@@ -20,7 +20,7 @@ function CircularSliderContainer(el, slidersOptions, options) {
     for (var i = 0; i < sliderContainer.sliders.length; i++) {
       if (sliderContainer.sliders[i].isWithinCircleRange(relativeCoordinates.x, relativeCoordinates.y)) {
         var angle = Math.atan2(relativeCoordinates.y - sliderContainer.center, relativeCoordinates.x - sliderContainer.center);
-        sliderContainer.sliders[i].updateKnob(angle);
+        sliderContainer.sliders[i].animateKnob(angle);
         // Prevent moving/pull-to-refresh on mobile
         e.preventDefault();
         e.stopPropagation();

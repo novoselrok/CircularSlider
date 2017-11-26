@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
       circleStroke: '#cccccc',
       knobColor: 'black',
       pathStroke: 'red'
-    }, {
+    },
+    {
       min: 10,
       max: 100,
       step: 10,
@@ -19,7 +20,8 @@ document.addEventListener('DOMContentLoaded', function () {
       circleStroke: '#cccccc',
       knobColor: 'black',
       pathStroke: 'red'
-    }, {
+    },
+    {
       min: 10,
       max: 100,
       step: 10,

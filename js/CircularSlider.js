@@ -11,6 +11,7 @@ function CircularSlider(sliderContainer, radius, options) {
 
   circularSlider.value = 0;
   circularSlider.currentDeg = 0;
+  circularSlider.animationVelocity = 0;
 
   circularSlider.circle = createSvgElement('circle', {
     'cx': (sliderContainer.size / 2) + 'px',
@@ -98,4 +99,31 @@ CircularSlider.prototype.setPath = function (angle) {
   ].join(" ");
 
   circularSlider.path.setAttribute('d', d);
+};
+
+CircularSlider.prototype.animateKnob = function (angle) {
+  // Rotate circle in positive direction by PI/2
+  var circularSlider = this;
+  var deg = toDegrees(angle + circularSlider.startAngle);
+  if (deg < 0 && deg > -90) {
+    deg += 360;
+  }
+  var animate = function () {
+    if (Math.abs(deg - circularSlider.currentDeg) <= 3) {
+      // Stop the animation
+      circularSlider.animationVelocity = 0;
+      circularSlider.updateKnob(toRadians(deg) - circularSlider.startAngle);
+    } else {
+      var step = ANIMATION_ATTRACTION * (deg - circularSlider.currentDeg);
+      circularSlider.animationVelocity = (circularSlider.animationVelocity + step) * ANIMATION_DAMPING;
+      circularSlider.currentDeg += circularSlider.animationVelocity;
+
+      var coordinates = circularSlider.getCoordinatesFromAngle(toRadians(circularSlider.currentDeg) - circularSlider.startAngle);
+      circularSlider.setKnobCoordinates(coordinates.x, coordinates.y);
+      circularSlider.setPath(toRadians(circularSlider.currentDeg));
+      circularSlider.animateKnob(toRadians(deg) - circularSlider.startAngle);
+    }
+  };
+
+  requestAnimationFrame(animate);
 };
