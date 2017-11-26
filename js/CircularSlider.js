@@ -9,6 +9,9 @@ function CircularSlider(sliderContainer, radius, options) {
   circularSlider.knobRadius = options['knobRadius'];
   circularSlider.circleWidth = options['circleWidth'];
 
+  circularSlider.value = 0;
+  circularSlider.currentDeg = 0;
+
   circularSlider.circle = createSvgElement('circle', {
     'cx': (sliderContainer.size / 2) + 'px',
     'cy': (sliderContainer.size / 2) + 'px',
@@ -23,9 +26,31 @@ function CircularSlider(sliderContainer, radius, options) {
     'fill': options['knobColor']
   }, sliderContainer.svg);
 
-  var coordinates = circularSlider.getCoordinatesFromAngle(-circularSlider.startAngle);
-  circularSlider.setKnobCoordinates(coordinates.x, coordinates.y);
+  circularSlider.updateKnob(-circularSlider.startAngle);
 }
+
+CircularSlider.prototype.updateKnob = function (angle) {
+  var circularSlider = this;
+  // Rotate circle in positive direction by PI/2
+  // and convert angle in radians to degrees
+  var deg = toDegrees(angle + circularSlider.startAngle);
+  if (deg < 0 && deg > -90) {
+    deg += 360;
+  }
+
+  var coordinates = circularSlider.getCoordinatesFromAngle(angle);
+  circularSlider.setKnobCoordinates(coordinates.x, coordinates.y);
+
+  // Calculate new value
+  // Map degrees from 0:360 to min:max range
+  var newValue = circularSlider.min + (circularSlider.max - circularSlider.min) * (deg / 360);
+  var newValueRounded = Math.floor(newValue / circularSlider.step) * circularSlider.step;
+  if (Math.abs(circularSlider.value - newValueRounded) >= circularSlider.step) {
+    circularSlider.value = newValueRounded;
+  }
+
+  circularSlider.currentDeg = deg;
+};
 
 CircularSlider.prototype.getCoordinatesFromAngle = function (angle) {
   var circularSlider = this;
@@ -41,4 +66,10 @@ CircularSlider.prototype.setKnobCoordinates = function (x, y) {
   circularSlider.knobY = y;
   circularSlider.knob.setAttribute('cx', x + 'px');
   circularSlider.knob.setAttribute('cy', y + 'px');
+};
+
+CircularSlider.prototype.isWithinCircleRange = function (x, y) {
+  var circularSlider = this;
+  var distToCenter = Math.sqrt(Math.pow(x - circularSlider.container.center, 2) + Math.pow(y - circularSlider.container.center, 2));
+  return Math.abs(distToCenter - circularSlider.radius) < circularSlider.circleWidth;
 };
