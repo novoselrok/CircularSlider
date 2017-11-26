@@ -17,4 +17,28 @@ function CircularSlider(sliderContainer, radius, options) {
     'stroke': options['circleStroke'],
     'stroke-width': circularSlider.circleWidth
   }, sliderContainer.svg);
+
+  circularSlider.knob = createSvgElement('circle', {
+    'r': circularSlider.knobRadius + 'px',
+    'fill': options['knobColor']
+  }, sliderContainer.svg);
+
+  var coordinates = circularSlider.getCoordinatesFromAngle(-circularSlider.startAngle);
+  circularSlider.setKnobCoordinates(coordinates.x, coordinates.y);
 }
+
+CircularSlider.prototype.getCoordinatesFromAngle = function (angle) {
+  var circularSlider = this;
+  return {
+    x: circularSlider.container.center + Math.cos(angle) * circularSlider.radius,
+    y: circularSlider.container.center + Math.sin(angle) * circularSlider.radius
+  }
+};
+
+CircularSlider.prototype.setKnobCoordinates = function (x, y) {
+  var circularSlider = this;
+  circularSlider.knobX = x;
+  circularSlider.knobY = y;
+  circularSlider.knob.setAttribute('cx', x + 'px');
+  circularSlider.knob.setAttribute('cy', y + 'px');
+};
