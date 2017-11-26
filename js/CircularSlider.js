@@ -21,6 +21,12 @@ function CircularSlider(sliderContainer, radius, options) {
     'stroke-width': circularSlider.circleWidth
   }, sliderContainer.svg);
 
+  circularSlider.path = createSvgElement('path', {
+    'stroke': options['pathStroke'],
+    'fill': 'none',
+    'stroke-width': circularSlider.circleWidth
+  }, sliderContainer.svg);
+
   circularSlider.knob = createSvgElement('circle', {
     'r': circularSlider.knobRadius + 'px',
     'fill': options['knobColor']
@@ -50,6 +56,7 @@ CircularSlider.prototype.updateKnob = function (angle) {
   }
 
   circularSlider.currentDeg = deg;
+  circularSlider.setPath(toRadians(deg));
 };
 
 CircularSlider.prototype.getCoordinatesFromAngle = function (angle) {
@@ -77,4 +84,18 @@ CircularSlider.prototype.isWithinCircleRange = function (x, y) {
 CircularSlider.prototype.isWithinKnobRange = function (x, y) {
   var circularSlider = this;
   return Math.sqrt(Math.pow(x - circularSlider.knobX, 2) + Math.pow(y - circularSlider.knobY, 2)) < circularSlider.knobRadius;
+};
+
+CircularSlider.prototype.setPath = function (angle) {
+  var circularSlider = this;
+  var start = circularSlider.getCoordinatesFromAngle(angle - circularSlider.startAngle);
+  var end = circularSlider.getCoordinatesFromAngle(-circularSlider.startAngle);
+  var largeArcFlag = angle <= Math.PI ? "0" : "1";
+
+  var d = [
+    "M", start.x, start.y,
+    "A", circularSlider.radius, circularSlider.radius, 0, largeArcFlag, 0, end.x, end.y
+  ].join(" ");
+
+  circularSlider.path.setAttribute('d', d);
 };
