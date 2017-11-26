@@ -73,3 +73,8 @@ CircularSlider.prototype.isWithinCircleRange = function (x, y) {
   var distToCenter = Math.sqrt(Math.pow(x - circularSlider.container.center, 2) + Math.pow(y - circularSlider.container.center, 2));
   return Math.abs(distToCenter - circularSlider.radius) < circularSlider.circleWidth;
 };
+
+CircularSlider.prototype.isWithinKnobRange = function (x, y) {
+  var circularSlider = this;
+  return Math.sqrt(Math.pow(x - circularSlider.knobX, 2) + Math.pow(y - circularSlider.knobY, 2)) < circularSlider.knobRadius;
+};
