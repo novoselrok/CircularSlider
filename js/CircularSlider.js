@@ -8,8 +8,9 @@ function CircularSlider(sliderContainer, radius, options) {
   circularSlider.max = options['max'];
   circularSlider.knobRadius = options['knobRadius'];
   circularSlider.circleWidth = options['circleWidth'];
+  circularSlider.onChange = options['onChange'];
 
-  circularSlider.value = 0;
+  circularSlider.value = circularSlider.min;
   circularSlider.currentDeg = 0;
   circularSlider.animationVelocity = 0;
 
@@ -51,9 +52,12 @@ CircularSlider.prototype.updateKnob = function (angle) {
   // Calculate new value
   // Map degrees from 0:360 to min:max range
   var newValue = circularSlider.min + (circularSlider.max - circularSlider.min) * (deg / 360);
-  var newValueRounded = Math.floor(newValue / circularSlider.step) * circularSlider.step;
+  var newValueRounded = Math.floor((newValue - circularSlider.min) / circularSlider.step) * circularSlider.step + circularSlider.min;
   if (Math.abs(circularSlider.value - newValueRounded) >= circularSlider.step) {
     circularSlider.value = newValueRounded;
+    if (typeof circularSlider.onChange === 'function') {
+      circularSlider.onChange(circularSlider.value);
+    }
   }
 
   circularSlider.currentDeg = deg;
