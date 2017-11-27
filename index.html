@@ -5,10 +5,58 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Circular slider</title>
     <style>
+        svg {
+            /* To remove grey highlight on iOS Safari click */
+            -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+        }
+
+        html, body {
+            -webkit-overflow-scrolling: touch;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .listener-container {
+            padding: 1em;
+        }
+
+        #circular-slider-container {
+            min-width: 320px;
+        }
+
     </style>
 </head>
 <body>
-<div id="wrapper"></div>
+<div class="container">
+    <div class="listener-container">
+        <div>
+            <span style="color: white; background-color: purple">Transportation:</span>
+            <span id="listener1"></span>
+        </div>
+        <div>
+            <span style="color: white; background-color: blue">Food:</span>
+            <span id="listener2"></span>
+        </div>
+        <div>
+            <span style="color: white; background-color: green">Insurance:</span>
+            <span id="listener3"></span>
+        </div>
+        <div>
+            <span style="color: white; background-color: orange">Entertainment:</span>
+            <span id="listener4"></span>
+        </div>
+        <div>
+            <span style="color: white; background-color: red">Health care:</span>
+            <span id="listener5"></span>
+        </div>
+    </div>
+    <div id="circular-slider-container"></div>
+</div>
 <script src="js/Util.js"></script>
 <script src="js/CircularSlider.js"></script>
 <script src="js/CircularSliderContainer.js"></script>
