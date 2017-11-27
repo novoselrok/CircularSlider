@@ -14,21 +14,6 @@ function CircularSliderContainer(el, slidersOptions, options) {
   sliderContainer.sliders = sliderContainer.createSliders(slidersOptions);
 
   // Wire up the events
-  sliderContainer.svg.addEventListener('click', function (e) {
-    var relativeCoordinates = sliderContainer.getRelativeCoordinates(e);
-    // Check if the event is close enough to any circles
-    for (var i = 0; i < sliderContainer.sliders.length; i++) {
-      if (sliderContainer.sliders[i].isWithinCircleRange(relativeCoordinates.x, relativeCoordinates.y)) {
-        var angle = Math.atan2(relativeCoordinates.y - sliderContainer.center, relativeCoordinates.x - sliderContainer.center);
-        sliderContainer.sliders[i].animateKnob(angle);
-        // Prevent moving/pull-to-refresh on mobile
-        e.preventDefault();
-        e.stopPropagation();
-        break;
-      }
-    }
-  });
-
   ['mousedown', 'touchstart'].forEach(function (type) {
     sliderContainer.svg.addEventListener(type, function (e) {
       var relativeCoordinates = sliderContainer.getRelativeCoordinates(e);
@@ -41,23 +26,49 @@ function CircularSliderContainer(el, slidersOptions, options) {
           break;
         }
       }
+
+      // Only register the click listener if we're not dragging the knob and
+      // only register it to fire once
+      if (sliderContainer.activeSlider === null) {
+        sliderContainer.svg.addEventListener('click', function (e) {
+          if (sliderContainer.activeSlider !== null) return;
+          var relativeCoordinates = sliderContainer.getRelativeCoordinates(e);
+          // Check if the event is close enough to any circles
+          for (var i = 0; i < sliderContainer.sliders.length; i++) {
+            if (sliderContainer.sliders[i].isWithinCircleRange(relativeCoordinates.x, relativeCoordinates.y)) {
+              var angle = Math.atan2(relativeCoordinates.y - sliderContainer.center, relativeCoordinates.x - sliderContainer.center);
+              sliderContainer.sliders[i].animateKnob(angle);
+              // Prevent moving/pull-to-refresh on mobile
+              e.preventDefault();
+              e.stopPropagation();
+              break;
+            }
+          }
+        }, {once: true});
+      }
+
     });
   });
 
   ['mouseup', 'touchend', 'touchcancel'].forEach(function (type) {
     window.addEventListener(type, function (e) {
       // Remove the active slider
-      sliderContainer.activeSlider = null;
+      if (sliderContainer.activeSlider !== null) {
+        e.preventDefault();
+        e.stopPropagation();
+        sliderContainer.activeSlider = null;
+      }
     });
   });
 
   ['mousemove', 'touchmove'].forEach(function (type) {
     window.addEventListener(type, function (e) {
       if (sliderContainer.activeSlider === null) return;
-      e.preventDefault();
       var relativeCoordinates = sliderContainer.getRelativeCoordinates(e);
       var angle = Math.atan2(relativeCoordinates.y - sliderContainer.center, relativeCoordinates.x - sliderContainer.center);
       sliderContainer.activeSlider.updateKnob(angle);
+      e.preventDefault();
+      e.stopPropagation();
     });
   });
 }
